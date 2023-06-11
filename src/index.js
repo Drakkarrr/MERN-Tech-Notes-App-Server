@@ -1,28 +1,32 @@
 import express from "express";
+import { fileURLToPath } from "url";
+import path, { dirname } from "path";
 import dotenv from "dotenv";
-import userRoutes from "./routes/user.routes.js";
-import { notFoundHandler, errorHandler } from "./middleware/error.middleware.js";
+import root from "./routes/root.js";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 5000;
 const app = express();
+const PORT = process.env.PORT || 5000;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
-app.use("/api/users", userRoutes)
-// app.use('/api/products', productRoutes)
-
-app.get("/", (req, res) => {
-    res.send("Server is now ready");
-}
-);
-
-app.use(notFoundHandler);
-app.use(errorHandler);
+app.use("/", express.static(path.join(__dirname, "public")));
+app.use("/", root);
+app.all("*", (req, res) => {
+  res.status(404);
+  if (req.accepts('html')) {
+    res.sendFile(path.join(__dirname, "views", "404.html"));
+  } else if (req.accepts('json')) {
+    res.json({ error: "404 Not found" });
+  } else {
+    res.type('txt').send('404 Not found');
+  }
+});
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}.`);
 });
