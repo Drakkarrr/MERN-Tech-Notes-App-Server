@@ -3,8 +3,10 @@ import { fileURLToPath } from "url";
 import path, { dirname } from "path";
 import dotenv from "dotenv";
 import root from "./routes/root.js";
+import logger from "./middleware/logger.js";
 
 dotenv.config();
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -14,8 +16,11 @@ const __dirname = dirname(__filename);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(logger.logger);
+
 app.use("/", express.static(path.join(__dirname, "public")));
 app.use("/", root);
+
 app.all("*", (req, res) => {
   res.status(404);
   if (req.accepts('html')) {
