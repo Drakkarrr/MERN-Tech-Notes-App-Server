@@ -5,11 +5,6 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    email: {
-        type: String,
-        unique: true, // unique email
-        required: true,
-    },
     password: {
         type: String,
         required: true,

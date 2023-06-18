@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
-const AutoIncrement = require('mongoose-sequence')(mongoose);
+import AutoIncrementFactory from 'mongoose-sequence';
+
+const AutoIncrement = AutoIncrementFactory(mongoose);
 
 const noteSchema = mongoose.Schema({
     user: {
